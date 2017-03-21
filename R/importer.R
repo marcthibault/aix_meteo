@@ -9,7 +9,7 @@ import <- function()
   data[, Longitude := NULL]
   data[, Country := NULL]
 
-  data[, date := 366 * (annee - 1743) + 31 * mois + jour]
+  data[, date := 12 * (annee - 1743) + mois]
   data
 }
 
