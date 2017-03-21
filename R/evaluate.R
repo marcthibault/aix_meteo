@@ -22,7 +22,7 @@ transform.AR <- function(residuals, sigma = 1., phi = 0.5)
   ar
 }
 
-evaluate.acf <- function(residuals, sigma = 1., theta = 0.5, phi = 0.5, ...)
+evaluate.acf <- function(residuals = rt(250, df = 10), sigma = 1., theta = 0.5, phi = 0.5, ...)
 {
   id <- transform.ID(residuals, ...)
   ma <- transform.MA(residuals, ...)
@@ -34,15 +34,17 @@ evaluate.acf <- function(residuals, sigma = 1., theta = 0.5, phi = 0.5, ...)
   acf(ma)
   dev.new()
   acf(ar)
+  dev.new()
+  pacf(id)
+  dev.new()
+  pacf(ma)
+  dev.new()
+  pacf(ar)
 }
 
-x <- rt(250, df = 10)
-evaluate.acf(x)
+evaluate.acf()
+norm()
 
 
 
-
-
-
-
-# 
+#
