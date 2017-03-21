@@ -10,4 +10,4 @@ temperature <- import()
 
 
 ggplot(temperature,aes(x=mois,y=AverageTemperature)) + geom_point()
-View(temperature)
+ggplot(temperature[1000:1050, ], aes(x = date, y = AverageTemperature)) + geom_line()
