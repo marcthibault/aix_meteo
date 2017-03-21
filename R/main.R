@@ -1,2 +1,13 @@
+library(FactoMineR)
+library(energy)
+library(mvtnorm)
+library(ggplot2)
 library(data.table)
-a = data.table(read.csv("data/Temperatures_Aix.csv"))
+
+source("importer.R")
+temperature <- import()
+
+
+
+ggplot(temperature,aes(x=mois,y=AverageTemperature)) + geom_point()
+View(temperature)
