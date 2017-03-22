@@ -4,6 +4,7 @@ library(mvtnorm)
 library(ggplot2)
 library(data.table)
 library(stats)
+library(fGarch)
 
 source("importer.R")
 source("models.R")
