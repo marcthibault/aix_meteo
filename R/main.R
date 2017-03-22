@@ -31,20 +31,30 @@ acf(ar_estimated$ar, lag.max = NULL,type = c("correlation", "covariance", "parti
 
 # appliquer une ARIMA
 predict(x, se.fit = FALSE, scale = NULL, df = Inf,interval = c("none", "confidence", "prediction"),level = 0.95, type = c("response", "terms"),terms = NULL, na.action = na.pass,pred.var = res.var/weights, weights = 1)
+n=10
 
-model_AR<- function() {
-  X <- x
-  for (i in 1:5) {
+model_AR<- function(n) {
+  # appliquer un AR
+  ar_estimated <- ar(x, aic = TRUE, order.max = n, method=c("yule-walker", "burg", "ols", "mle", "yw"))
+  
+  innovation <- x
+  
+  for (i in 1:n) {
     a <- x[(i+1):length(x)]
     for (j in 1:i) {
         a[[length(a) + 1]] = 0
     }
     
-    X <- X - ar_estimated$ar[i]*a
+    innovation <- innovation - ar_estimated$ar[i]*a
   }
+  return(innovation)
 }
-X
+
+innovation <- model_AR(40)
+
+
 acf(X, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+pacf(X, lag.max = NULL,plot = TRUE)
 
 
 
