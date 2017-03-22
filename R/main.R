@@ -34,7 +34,6 @@ date <- temperature[, X]
 plot.series(x, model.BB(date, x))
 evaluate.acf(model.BB(date, x)[[3]])
 
-
 # Residus de STL
 plot.series(x, model.stl(date, x))
 evaluate.acf(model.stl(date, x)[[3]])
@@ -47,14 +46,13 @@ evaluate.acf(model.AR(date, x)[[3]])
 plot.series(x, model.ARIMA(date, x))
 evaluate.acf(model.ARIMA(date, x)[[3]])
 
-# appliquer une ARIMA
-order_pdq <- c(10,3,3)
-arima_estimated <- arima(x, order = order_pdq,
-      seasonal = list(order = c(0, 0, 0), period = NA),
-      xreg = NULL, include.mean = TRUE,
-      transform.pars = TRUE,
-      fixed = NULL, init = NULL,
-      method = c("CSS-ML", "ML", "CSS"))
+# Residus de GARCH
+plot.series(x, model.GARCH(date, x))
+evaluate.acf(model.GARCH(date, x)[[3]])
 
-acf(arima_estimated$residuals, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
-pacf(arima_estimated$residuals, lag.max = NULL,plot = TRUE)
+
+
+
+
+
+#

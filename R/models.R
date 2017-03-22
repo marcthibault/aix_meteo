@@ -4,6 +4,7 @@ library(mvtnorm)
 library(ggplot2)
 library(data.table)
 library(stats)
+library(fGarch)
 
 
 model.AR<- function(date, x) {
@@ -60,6 +61,20 @@ model.ARIMA <- function(date, x, order_pdq = c(10,3,3))
   res
 
 }
+
+model.GARCH <- function(date, x)
+{
+  garch_estimated <- garchFit(~ garch(3, 3), data = x)
+
+  residuals <- garch_estimated@residuals
+  residuals <- residuals[is.na(residuals) == FALSE]
+  res <- list()
+  res[[3]] <- residuals
+  res
+
+}
+
+
 
 
 
