@@ -75,7 +75,4 @@ model.GARCH <- function(date, x)
 }
 
 
-
-
-
 # a <- model.stl(date, x)

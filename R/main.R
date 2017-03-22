@@ -53,6 +53,4 @@ evaluate.acf(model.GARCH(date, x)[[3]])
 
 
 
-
-
 #
