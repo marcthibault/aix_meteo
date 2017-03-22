@@ -57,7 +57,7 @@ plot(date*b$coefficients["date"]+datesquare*b$coefficients["datesquare"])
 
 
 # appliquer une ARIMA
-order_pdq <- c(2,2,2)
+order_pdq <- c(10,3,3)
 arima_estimated <- arima(x, order = order_pdq,
       seasonal = list(order = c(0, 0, 0), period = NA),
       xreg = NULL, include.mean = TRUE,
@@ -65,7 +65,8 @@ arima_estimated <- arima(x, order = order_pdq,
       fixed = NULL, init = NULL,
       method = c("CSS-ML", "ML", "CSS"))
 
-
+acf(arima_estimated$residuals, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+pacf(arima_estimated$residuals, lag.max = NULL,plot = TRUE)
 
 
 
