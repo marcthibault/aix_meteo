@@ -13,8 +13,6 @@ import <- function()
   data
 }
 
-data = import()
-
 
 
 import.file <- function(file = "../data/midas_tempdrnl_201601-201612.txt", station = 57247)
@@ -59,7 +57,7 @@ transform.global <- function(range = c(2010:2016), station = 57247)
   archive <<- data
 }
 
-transform.global(range = c(1853:2016), station = 9)
+# transform.global(range = c(1853:2016), station = 9)
 
 
 

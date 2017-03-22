@@ -6,84 +6,74 @@ library(data.table)
 library(stats)
 
 source("importer.R")
-temperature <- import()
-temperature <- temperature[is.na(temperature[,AverageTemperature]) == FALSE]
+source("models.R")
+
+temperature <- import.global()
+temperature <- temperature[is.na(temperature[, MAX_AIR_TEMP]) == FALSE]
 
 
-# Créer série temp, test
+# Simuler série temp, test
 serietemp <- ts(data = rt(250, df = 10), start = 1, frequency = 1)
 plot(serietemp, ylim = c(-5,5), main ="Réalisations de variables aléatoires iid de loi de Student a 10 degres de liberté")
 
+# Simulation de l'ARIMA
+SIMU_ARIMA <- arima.sim(model = list(0,0,0), n = 50,innov = rnorm(n), n.start = NA)
+plot(SIMU_ARIMA)
+
 # Ploter la serie temporelle
-ggplot(temperature[], aes(x = date, y = AverageTemperature)) + geom_line()
+ggplot(temperature[], aes(x = date, y = MAX_AIR_TEMP)) + geom_line()
 
 
-x <- temperature[,AverageTemperature]
-date <- temperature[,date]
+# On va travailler sur la série teporelle des températures
+x <- temperature[,MAX_AIR_TEMP]
+date <- temperature[,X]
 
 
 # appliquer une MA
 a <- filter(x, filter=c(1,1), method = c("convolution"), sides = 2, circular = FALSE)
 
-# appliquer un AR
-ar_estimated <- ar(x, aic = TRUE, order.max = 5, method=c("yule-walker", "burg", "ols", "mle", "yw"))
-acf(ar_estimated$ar, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
-
-# appliquer une ARIMA
-predict(x, se.fit = FALSE, scale = NULL, df = Inf,interval = c("none", "confidence", "prediction"),level = 0.95, type = c("response", "terms"),terms = NULL, na.action = na.pass,pred.var = res.var/weights, weights = 1)
-n=10
-
-model_AR<- function(n) {
-  # appliquer un AR
-  ar_estimated <- ar(x, aic = TRUE, order.max = n, method=c("yule-walker", "burg", "ols", "mle", "yw"))
-  
-  innovation <- x
-  
-  for (i in 1:n) {
-    a <- x[(i+1):length(x)]
-    for (j in 1:i) {
-        a[[length(a) + 1]] = 0
-    }
-    
-    innovation <- innovation - ar_estimated$ar[i]*a
-  }
-  return(innovation)
-}
-
-innovation <- model_AR(40)
 
 
-acf(X, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
-pacf(X, lag.max = NULL,plot = TRUE)
+# On applique le modèle de l'AR, et on va ploter l'ACF et la PACF de l'innovation
+innovation <- model_AR(20)
+acf(innovation, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+pacf(innovation, lag.max = NULL,plot = TRUE)
 
 
 
-
-
-
+# Méthode de Buys-Ballot
 datesquare <- date*date
 b <- lm(x ~ sin(date*2*pi/12.)+sin(2*date*2*pi/12.)+cos(2*date*2*pi/12.)+ cos(date*2*pi/12.) + date + datesquare)
-plot(x[2000:2080])
-lines(b$fitted.values[2000:2080])
+plot(x)
+lines(b$fitted.values)
 
 # Afficher la trend
 plot(b$coefficients["(Intercept)"]+b$coefficients["date"]*date+b$coefficients["datesquare"]*datesquare)
 
-# ACF et PACF
+# ACF et PACF pour les résidus de Buys Ballot
 acf(b$residuals, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
 pacf(b$residuals, lag.max = NULL, plot = TRUE)
+plot(date*b$coefficients["date"]+datesquare*b$coefficients["datesquare"])
+
+
+# appliquer une ARIMA
+order_pdq <- c(2,2,2)
+arima_estimated <- arima(x, order = order_pdq,
+      seasonal = list(order = c(0, 0, 0), period = NA),
+      xreg = NULL, include.mean = TRUE,
+      transform.pars = TRUE,
+      fixed = NULL, init = NULL,
+      method = c("CSS-ML", "ML", "CSS"))
 
 
 
-SIMU_ARIMA <- arima.sim(model = list(0,0,0), n = 50, rand.gen = rnorm,innov = rand.gen(n), n.start = NA)
-plot(SIMU_ARIMA)
+
 
 
 stl(x, s.window = "periodic", s.degree = 0, t.window = NULL, t.degree = 1, l.window = nextodd(period), l.degree = t.degree, s.jump = ceiling(s.window/10), t.jump = ceiling(t.window/10),l.jump = ceiling(l.window/10), robust = FALSE)
 
 
 
-x <- ts(x, start = c(2000,1), end=c(2050,51), frequency = 51)
 
 decomposition <- decompose(x, type = c("multiplicative"),filter = NULL)
 
