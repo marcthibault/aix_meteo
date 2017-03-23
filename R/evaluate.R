@@ -24,27 +24,28 @@ transform.AR <- function(residuals, sigma = 1., phi = 0.5)
 
 evaluate.acf <- function(residuals = rt(250, df = 10), sigma = 1., theta = 0.5, phi = 0.5, ...)
 {
-  id <- transform.ID(residuals, ...)
-  ma <- transform.MA(residuals, ...)
-  ar <- transform.AR(residuals, ...)
+  residuals <- transform.ID(residuals, ...)
 
-  dev.new()
-  acf(id)
-  dev.new()
-  acf(ma)
-  dev.new()
-  acf(ar)
-  dev.new()
-  pacf(id)
-  dev.new()
-  pacf(ma)
-  dev.new()
-  pacf(ar)
+  par(mfrow = c(2,1))
+  par(mar = c(3, 3, 3, 3))
+  acf(residuals)
+  pacf(residuals)
 }
 
-evaluate.acf()
-norm()
+plot.series <- function(x, results)
+{
+  par(mfrow = c(4,1))
+  par(mar=c(2, 2, 2, 2))
+  plot(x, type = "l")
+  par(mar=c(2, 2, 2, 2))
+  plot(results[[1]], type = "l")
+  par(mar=c(2, 2, 2, 2))
+  plot(results[[2]], type = "l")
+  par(mar=c(2, 2, 2, 2))
+  plot(results[[3]], type = "l")
+
+}
 
 
-
-#
+# plot.series(x, model.BB(date, x))
+# evaluate.acf(model.BB(date, x)[[3]])
