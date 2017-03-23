@@ -34,10 +34,15 @@ date <- temperature[,X]
 a <- filter(x, filter=c(1,1), method = c("convolution"), sides = 2, circular = FALSE)
 
 
-
 # On applique le modèle de l'AR, et on va ploter l'ACF et la PACF de l'innovation
-innovation <- model_AR(20)
+innovation <- model_AR(10)
 acf(innovation, lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+
+ar_estimated <- ar(x, aic = TRUE, order.max = n, method=c("yule-walker", "burg", "ols", "mle", "yw"))
+residus <- ar_estimated$resid
+
+acf(residus[25:length(residus)], lag.max = NULL,type = c("correlation", "covariance", "partial"), plot = TRUE, na.action = na.fail, demean = TRUE)
+
 pacf(innovation, lag.max = NULL,plot = TRUE)
 
 
