@@ -12,14 +12,13 @@ source("evaluate.R")
 
 temperature <- import.global()
 
-
-# On va travailler sur la s�rie teporelle des temp�ratures
+# On va travailler sur la serie teporelle des temperatures
 x <- temperature[, MAX_AIR_TEMP]
 date <- temperature[, X]
 
 
 
-# Residus de Buys Ballo
+# Residus de Buys Ballot
 plot.series(x, model.BB(date, x))
 evaluate.acf(model.BB(date, x)[[3]])
 
@@ -32,11 +31,16 @@ plot.series(x, model.AR(date, x))
 evaluate.acf(model.AR(date, x)[[3]])
 
 # Residus de ARIMA
-plot.series(x, model.ARIMA(date, x))
-evaluate.acf(model.ARIMA(date, x)[[3]])
+plot.series(x, model.ARIMA(date, x,c(1,0,0)))
+evaluate.acf(model.ARIMA(date, x,c(10,3,3))[[3]])
 
 # Residus de GARCH
+resid <- model.GARCH(date, x)[[3]]
 plot.series(x, model.GARCH(date, x))
-evaluate.acf(model.GARCH(date, x)[[3]])
+evaluate.acf(resid)
+verif.Box_pierce.AR(resid,5)
 
+
+
+verif.Box_pierce(model.AR(date, x)[[3]],lag=5)
 
