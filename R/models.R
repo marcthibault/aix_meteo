@@ -6,6 +6,14 @@ library(data.table)
 library(stats)
 library(fGarch)
 
+model.MA <- function(date, x) {
+  ma_estimated <- decompose(x,c("additive"),filter=NULL)
+  residuals <- ar_estimated$resid
+  residuals <- residuals[is.na(residuals) == FALSE]
+  res <- list()
+  res[[3]] <- residuals
+  res
+}
 
 model.AR<- function(date, x, n = 12) {
   ar_estimated <- ar(x, aic = TRUE, order.max = n, method=c("yule-walker", "burg", "ols", "mle", "yw"))
@@ -50,9 +58,8 @@ model.stl <- function(date, x)
 
 model.ARIMA <- function(date, x, order_pdq = c(10,3,3), verbose = FALSE)
 {
-
   arima_estimated <- arima(x, order = order_pdq,
-    seasonal = list(order = c(0, 0, 0), period = NA),
+    seasonal = list(order = c(1, 0, 0), period = NA),
     xreg = NULL, include.mean = TRUE,
     transform.pars = TRUE,
     fixed = NULL, init = NULL,
@@ -67,7 +74,6 @@ model.ARIMA <- function(date, x, order_pdq = c(10,3,3), verbose = FALSE)
   res <- list()
   res[[3]] <- residuals
   res
-
 }
 
 model.GARCH <- function(date, x, verbose = FALSE)
@@ -82,9 +88,11 @@ model.GARCH <- function(date, x, verbose = FALSE)
   residuals <- residuals[is.na(residuals) == FALSE]
   res <- list()
   res[[3]] <- residuals
-  res
-
+  return(res)
 }
 
 
-# a <- model.stl(date, x)
+verif.Box_pierce <- function(residuals,lag = 10)
+{
+  return(Box.test(residuals, lag, type = c("Box-Pierce"), fitdf = 0))
+}

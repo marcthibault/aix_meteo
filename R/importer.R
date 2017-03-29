@@ -1,5 +1,6 @@
 library(data.table)
 
+# Ancien jeu de données ###########################
 import <- function()
 {
   data = data.table(read.csv("../data/Temperatures_Aix.csv"))
@@ -12,7 +13,7 @@ import <- function()
   data[, date := 12 * (annee - 1743) + mois]
   data
 }
-
+###################################################
 
 
 import.file <- function(file = "../data/midas_tempdrnl_201601-201612.txt", station = 57247)
