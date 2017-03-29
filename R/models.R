@@ -7,7 +7,7 @@ library(stats)
 library(fGarch)
 
 
-model.AR<- function(date, x) {
+model.AR<- function(date, x, n = 12) {
   ar_estimated <- ar(x, aic = TRUE, order.max = n, method=c("yule-walker", "burg", "ols", "mle", "yw"))
 
   residuals <- ar_estimated$resid
@@ -17,11 +17,15 @@ model.AR<- function(date, x) {
   res
 }
 
-model.BB <- function(date, x)
+model.BB <- function(date, x, verbose = FALSE)
 {
   datesquare <- date * date
   reg <- lm(x ~ sin(date * 2 * pi / 12) + sin(2 * date * 2 * pi / 12.) + cos(2 * date * 2 * pi / 12.)+ cos(date * 2 * pi / 12.) + date + datesquare)
 
+  if(verbose)
+  {
+    print(reg$coefficients)
+  }
   res <- list()
   res[[1]] <- reg$coefficients["sin(date * 2 * pi/12)"] * sin(date * 2 * pi / 12) +
                    reg$coefficients["sin(2 * date * 2 * pi/12)"] * sin(2 * date * 2 * pi/12) +
@@ -44,7 +48,7 @@ model.stl <- function(date, x)
 }
 
 
-model.ARIMA <- function(date, x, order_pdq = c(10,3,3))
+model.ARIMA <- function(date, x, order_pdq = c(10,3,3), verbose = FALSE)
 {
 
   arima_estimated <- arima(x, order = order_pdq,
@@ -54,6 +58,10 @@ model.ARIMA <- function(date, x, order_pdq = c(10,3,3))
     fixed = NULL, init = NULL,
     method = c("CSS-ML", "ML", "CSS"))
 
+  if (verbose)
+  {
+    print(arima_estimated)
+  }
   residuals <- arima_estimated$resid
   residuals <- residuals[is.na(residuals) == FALSE]
   res <- list()
@@ -62,10 +70,14 @@ model.ARIMA <- function(date, x, order_pdq = c(10,3,3))
 
 }
 
-model.GARCH <- function(date, x)
+model.GARCH <- function(date, x, verbose = FALSE)
 {
-  garch_estimated <- garchFit(~ garch(3, 3), data = x)
+  garch_estimated <- garchFit(~ garch(5, 5), data = x)
 
+  if(verbose)
+  {
+    print(garch_estimated)
+  }
   residuals <- garch_estimated@residuals
   residuals <- residuals[is.na(residuals) == FALSE]
   res <- list()

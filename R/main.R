@@ -31,7 +31,7 @@ date <- temperature[, X]
 
 
 # Residus de Buys Ballo
-plot.series(x, model.BB(date, x))
+plot.series(x, model.BB(date, x, verbose = TRUE))
 evaluate.acf(model.BB(date, x)[[3]])
 
 # Residus de STL
@@ -43,12 +43,15 @@ plot.series(x, model.AR(date, x))
 evaluate.acf(model.AR(date, x)[[3]])
 
 # Residus de ARIMA
-plot.series(x, model.ARIMA(date, x))
-evaluate.acf(model.ARIMA(date, x)[[3]])
+plot.series(x, model.ARIMA(date, x, order_pdq = c(5,2,12), verbose = TRUE))
+evaluate.acf(model.ARIMA(date, x, order_pdq = c(5,2,12), verbose = TRUE)[[3]])
 
-# Residus de GARCH
-plot.series(x, model.GARCH(date, x))
+# Resultat de GARCH, sur residus STL
+plot.series(x, model.GARCH(date, model.stl(date, x)[[3]], verbose = TRUE))
 evaluate.acf(model.GARCH(date, x)[[3]])
+
+
+
 
 
 

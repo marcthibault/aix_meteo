@@ -37,13 +37,21 @@ plot.series <- function(x, results)
   par(mfrow = c(4,1))
   par(mar=c(2, 2, 2, 2))
   plot(x, type = "l")
-  par(mar=c(2, 2, 2, 2))
-  plot(results[[1]], type = "l")
-  par(mar=c(2, 2, 2, 2))
-  plot(results[[2]], type = "l")
+  if (!is.null(results[[1]]))
+  {
+    print("ploting [[1]]")
+    par(mar=c(2, 2, 2, 2))
+    plot(results[[1]], type = "l")
+  }
+  if (!is.null(results[[2]]))
+  {
+    print("ploting [[2]]")
+    par(mar=c(2, 2, 2, 2))
+    plot(results[[2]], type = "l")
+  }
+  print("ploting [[3]]")
   par(mar=c(2, 2, 2, 2))
   plot(results[[3]], type = "l")
-
 }
 
 
